@@ -7,7 +7,6 @@ import ai.fritz.vision.ImageRotation
 import ai.fritz.vision.PredictorStatusListener
 import ai.fritz.vision.styletransfer.FritzVisionStylePredictor
 import ai.fritz.vision.styletransfer.PaintingManagedModels
-import android.graphics.Canvas
 import android.os.Bundle
 import android.util.Log
 import android.util.Size
@@ -102,8 +101,10 @@ class MainActivity : AppCompatActivity() {
 
             val visionImage = FritzVisionImage.fromMediaImage(mediaImage, imageRotation)
 
-            val managedModel = PaintingManagedModels.PINK_BLUE_RHOMBUS_MANAGED_MODEL
+            val managedModel = PaintingManagedModels.BICENTENNIAL_PRINT_MANAGED_MODEL
 
+            /* Load the FritzVision Style Transfer Predictor
+             */
             FritzVision.StyleTransfer.loadPredictor(
                 managedModel, object : PredictorStatusListener<FritzVisionStylePredictor> {
                     override fun onPredictorReady(stylePredictor: FritzVisionStylePredictor?) {
@@ -113,13 +114,16 @@ class MainActivity : AppCompatActivity() {
                 }
             )
 
-
+            /* Get the FritzVisionStyleResult by running the predictor on the vision image.
+             */
             val styleResult = predictor?.predict(visionImage)
 
+            /* Perform UI operations accordingly.
+             */
             runOnUiThread {
                 Log.d(TAG, "UI thread")
-
-//                styleResult?.drawToCanvas(Canvas())
+                val bitmap = styleResult?.toBitmap()
+                image_view.setImageBitmap(bitmap)
             }
         }
     }
